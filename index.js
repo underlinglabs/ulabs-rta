@@ -5,7 +5,7 @@ import axios from 'axios';
 
 
 async function report(status, data) {
-  console.log('Report', status, data);
+  console.log('urta: Report', status, data);
   await axios.put(process.env.UC_ENDPOINT, {
     status,
     ...data,
@@ -13,15 +13,15 @@ async function report(status, data) {
 }
 
 async function reportStarted() {
-  await report('urta: STARTED');
+  await report('STARTED');
 }
 
 async function reportCompleted(data) {
-  await report('urta: COMPLETED', { data });
+  await report('COMPLETED', { data });
 }
 
 async function reportFailed(err) {
-  await report('urta: FAILED', {
+  await report('FAILED', {
     error: {
       message: err.message,
     },
