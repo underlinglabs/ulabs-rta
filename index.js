@@ -3,9 +3,8 @@ import 'dotenv/config';
 import path from 'node:path';
 import axios from 'axios';
 
-
 async function report(status, data) {
-  console.log('urta: Report', status, data);
+  console.log('urtax: Report', status, data);
   await axios.put(process.env.UC_ENDPOINT, {
     status,
     ...data,
@@ -35,16 +34,22 @@ async function run() {
       params[key.replace('UC_PARAM_', '')] = process.env[key];
     }
   }
-  console.log('urta: LAUNCH', params);
+  console.log('urtax: LAUNCH', params);
   try {
     reportStarted();
     const modulePath = path.resolve(`index.js?r=${Date.now()}`)
     const mod = await import(modulePath);
     const output = await mod.default(params);
-    console.log('Return', output);
     await reportCompleted(output);
   } catch (err) {
-    await reportFailed(err);
+    console.log('urtax - Something went wrong!');
+    console.log(err);
+    try {
+      await reportFailed(err);
+    } catch (err) {
+      console.log('urtax: Attempt to report failure failed', err);
+      throw err;
+    }
   }
 }
 run();
